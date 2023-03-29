@@ -30,9 +30,14 @@ def update_data_file():
 
     data_table = soup.find(RESULT_TABLE_TAG)
     fire_names = data_table.find_all(FIRE_NAMES_TAG)
-    for fire_name in fire_names:
-        print(fire_name.string)
+    with open("fire_data.csv", "w") as fire_data_file:
+        for fire_name in fire_names:
+            writer = csv.writer(fire_data_file)
+            writer.writerow(fire_name)
+            #TODO:: remove testing code
+            # print(fire_name.string)
 
 if __name__ == "__main__":
+    #TODO:: remove testing code
     #update_data_file()
     pass
