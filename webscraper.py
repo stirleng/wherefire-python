@@ -30,14 +30,26 @@ def update_data_file():
 
     data_table = soup.find(RESULT_TABLE_TAG)
     fire_names = data_table.find_all(FIRE_NAMES_TAG)
-    with open("fire_data.csv", "w") as fire_data_file:
+
+    new_incidents_available = False
+    new_incidents_fire_names_list = []
+
+    #r+ signifies both reading and writing
+    with open("fire_data.csv", "r+") as fire_data_file:
+        writer = csv.writer(fire_data_file)
         for fire_name in fire_names:
-            writer = csv.writer(fire_data_file)
+            if fire_name not in fire_data_file:
+                new_incidents_available = True
+                new_incidents_fire_names_list.append(fire_name)
             writer.writerow(fire_name)
-            #TODO:: remove testing code
+            #TODO:: remove testing code below
             # print(fire_name.string)
 
+    #note: returns a tuple of two vars
+    return new_incidents_available, new_incidents_fire_names_list
+                
+
+#TODO:: remove testing code below
 if __name__ == "__main__":
-    #TODO:: remove testing code
     #update_data_file()
     pass
