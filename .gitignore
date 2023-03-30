@@ -1,2 +1,4 @@
 
 *.csv
+api_secrets.py
+*.pyc

@@ -15,18 +15,19 @@ current_year_url = 'https://www.fire.ca.gov/incidents'
 prev_year_url = 'https://www.fire.ca.gov/incidents/2022/'
 
 #specify certain request headers so the website doesn't 403 our request and we receive an xml response
-headers = {'Accept': 'application/xml', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0'} 
+headers = {  'Connection': 'close', 'Accept': 'application/xml', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0'} 
 
 #/constants
 #==========
 
 def update_data_file():
     #get webpage xml from response
-    response_xml = requests.get(prev_year_url, headers=headers)
-    response_text = response_xml.text
+    with requests.Session() as s:
+        response = s.get(prev_year_url, headers=headers)
+        response_xml = response.text
 
     #parse xml using lxml parser
-    soup = BS(response_text, 'lxml')
+    soup = BS(response_xml, 'lxml')
 
     data_table = soup.find(RESULT_TABLE_TAG)
     fire_names = data_table.find_all(FIRE_NAMES_TAG)
@@ -40,7 +41,7 @@ def update_data_file():
         for fire_name in fire_names:
             if fire_name not in fire_data_file:
                 new_incidents_available = True
-                new_incidents_fire_names_list.append(fire_name)
+                new_incidents_fire_names_list.append(fire_name.text)
             writer.writerow(fire_name)
             #TODO:: remove testing code below
             # print(fire_name.string)

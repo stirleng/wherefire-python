@@ -1,5 +1,7 @@
 #webscraper is webscraper.py
 import webscraper
+#twitter_bot is twitter_bot.py
+import twitter_bot
 import time
 
 #constants
@@ -12,9 +14,9 @@ HOUR_IN_SECONDS = 86400
 
 def main():
     #main server loop
-    while(1):
+    #while(1):
         #wait an hour between webscraping checks
-        time.sleep(HOUR_IN_SECONDS)
+        #time.sleep(HOUR_IN_SECONDS)
 
         new_incidents_available, new_incidents_fire_names_list = webscraper.update_data_file()
         if new_incidents_available == True:
