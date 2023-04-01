@@ -18,9 +18,9 @@ def main():
         #wait an hour between webscraping checks
         #time.sleep(HOUR_IN_SECONDS)
 
-        new_incidents_available, new_incidents_fire_names_list = webscraper.update_data_file()
+        new_incidents_available, new_fire_names = webscraper.update_data_file()
         if new_incidents_available == True:
-            twitter_bot.tweet(new_incidents_fire_names_list)
+            twitter_bot.tweet(new_fire_names)
 
 
 if __name__ == "__main__":
