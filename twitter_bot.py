@@ -19,7 +19,7 @@ def tweet(new_fire_names):
 
     with open("fire_data.csv", "r") as fire_data_file:
         reader = csv.reader(fire_data_file)
-        for new_fire_name in new_fire_names:
+        for new_fire_name in new_fire_names: #TODO:: abstract searching csv to function
             for row in reader:  #slow (O(n^2)), possibly worth optimizing
                 if any(row) and new_fire_name == row[0]: #any(row) checks to make sure the row is not empty
                     county_name = row[1]
