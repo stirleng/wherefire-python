@@ -50,14 +50,15 @@ def update_data_file():
         fire_counties.append(fire_county_name_element.text.strip())
         fire_start_dates.append(fire_date_started_element.text.strip())
         split_date = fire_date_started_element.text.split('/')
-        stripped_date = split_date[0].lstrip('0') + "/" + split_date[1].lstrip('0') + "/" + fire_name_text.replace(" ", "-")
+        #TODO:: use a regex to remove all alphanumeric characters in the fire name (to use in url - maybe only replace chars not permitted in urls?)
+        stripped_date = split_date[0].lstrip('0') + "/" + split_date[1].lstrip('0') + "/" + fire_name_text.replace("(","").replace(")","").replace(" ", "-")
         incident_url = INCIDENT_URL_BASE + stripped_date
         with requests.Session() as s:
             response = s.get(incident_url, headers=headers)
             response_xml = response.text
             soup = BS(response_xml, 'lxml')
             lat_long_title_element = soup.find(string=LAT_LONG_TEXT)
-            #TODO:: URGENT: fix code below so six rivers fire complex finds the "Latitude / Longitude" text
+            print(fire_name_text)
             lat_long_element = lat_long_title_element.parent.next_sibling.next_sibling
             lat_long = lat_long_element.text.replace("[", "").replace("]", "").replace(" ", "")
             fire_locations.append(lat_long)
