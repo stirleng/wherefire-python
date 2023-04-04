@@ -40,7 +40,8 @@ def update_data_file():
     fire_names = []
     fire_counties = []
     fire_start_dates = []
-    fire_locations = []
+    fire_latitudes = []
+    fire_longitudes = []
     #iterate through table elements and store text
     for fire_name_element in fire_name_elements:
         fire_name_text = fire_name_element.contents[1].text.strip()
@@ -58,10 +59,12 @@ def update_data_file():
             response_xml = response.text
             soup = BS(response_xml, 'lxml')
             lat_long_title_element = soup.find(string=LAT_LONG_TEXT)
-            print(fire_name_text)
             lat_long_element = lat_long_title_element.parent.next_sibling.next_sibling
-            lat_long = lat_long_element.text.replace("[", "").replace("]", "").replace(" ", "")
-            fire_locations.append(lat_long)
+            lat_long = lat_long_element.text.replace("[", "").replace("]", "").replace(" ", "").split(",")
+            for val in lat_long:
+                float(val)
+            fire_latitudes.append(lat_long[0])
+            fire_longitudes.append(lat_long[1])
 
 
     #find which fires are new
@@ -71,11 +74,11 @@ def update_data_file():
     with open("fire_data.csv", "r+", newline='') as fire_data_file: #(r+ signifies both reading and writing) (newline='' prevents it from writing 2 newlines on Windows)
         writer = csv.writer(fire_data_file)
         contents = fire_data_file.read()
-        for fire_name, county_name, date_started,location in zip(fire_names, fire_counties, fire_start_dates,fire_locations):
+        for fire_name, county_name, date_started,latitude,longitude in zip(fire_names, fire_counties, fire_start_dates,fire_latitudes,fire_longitudes):
             if fire_name not in contents:
                 new_incidents_available = True
                 new_incidents_fire_names.append(fire_name)
-                writer.writerow([fire_name,county_name,date_started,location])
+                writer.writerow([fire_name,county_name,date_started,latitude,longitude])
             #TODO:: remove testing code below
             # print(fire_name.string)
 
