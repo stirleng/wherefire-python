@@ -4,15 +4,26 @@ import webscraper
 import twitter_bot
 import time
 import pandas as pd
+import geopandas as gpd
+
+#globals
+#=======
+
+gds_list = [] #a list of all geodataseries 
+
+#=======
+#globals
 
 #constants
 #=========
 
 HOUR_IN_SECONDS = 86400
 CSV_COLUMN_NAMES = ['name','county','date_started','latitude','longitude']
+SHAPEFILE_NAMES = ['fhszs06_3.shp']
 
 #\constants
 #==========
+
 
 def main():
         #blank_dict = {key: [] for key in CSV_COLUMN_NAMES}
@@ -29,7 +40,7 @@ def main():
 def compile_tweet_text(new_fire_names):
     tweet_text_list = []
     df = pd.read_csv('fire_data.csv')
-    print(df)
+    #print(df)
     search_column_name = CSV_COLUMN_NAMES[0]
     for new_fire_name in new_fire_names:
         fire_result = df[df[search_column_name] == new_fire_name]
@@ -39,8 +50,20 @@ def compile_tweet_text(new_fire_names):
         longitude = fire_result[CSV_COLUMN_NAMES[4]]
         tweet_text = "ALERT\n\nNew fire: " + new_fire_name + "\nCounty: " + county_name + "\nStarted on: " + date_started + "\n"
         tweet_text_list.append(tweet_text)
-    print(tweet_text_list)
     return tweet_text_list
+
+#constructs fhsz polygons from shapefiles
+def construct_fhsz_polygons():
+    for shapefile_name in SHAPEFILE_NAMES:
+        gdf = gpd.read_file(shapefile_name) #gdf is geodataframe
+        for row in gdf:
+            gpd.GeoSeries(gdf['geometry'])
+
+             
+
+#returns what classification of fire hazard severity zone a location is in (none,)
+def fhsz(lat,long):
+   if gpd.Point(lat,long):
 
 if __name__ == "__main__":
     compile_tweet_text(['Colorado Fire'])

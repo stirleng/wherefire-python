@@ -2,3 +2,4 @@
 *.csv
 api_secrets.py
 *.pyc
+jupyter-notebook-webscraper.ipynb
