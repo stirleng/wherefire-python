@@ -27,17 +27,18 @@ SHAPEFILE_NAMES = ['./shapefiles/full_california_fhsz/fhszs06_3.shp']
 
 
 def main():
-            read_shapefiles()
+        #read_shapefiles()
         #blank_dict = {key: [] for key in CSV_COLUMN_NAMES}
         #new_fire_df = pd.DataFrame.from_dict(blank_dict)
         #new_fire_df.to_csv('fire_data.csv', header=CSV_COLUMN_NAMES, index=False)
     #main server loop
-    #while(1):
+    while(1):
+        webscraper.update_data_file()
         #wait an hour between webscraping checks
-        #time.sleep(HOUR_IN_SECONDS)
-        #new_incidents_available, new_fire_names = webscraper.update_data_file()
-        #if new_incidents_available == True:
-            new_fire_names = ['Colorado Fire']
+        time.sleep(HOUR_IN_SECONDS)
+        new_incidents_available, new_fire_names = webscraper.update_data_file()
+        if new_incidents_available == True:
+            print("tweeting")
             twitter_bot.tweet(compile_tweet_text(new_fire_names))
 
 def compile_tweet_text(new_fire_names):
@@ -51,10 +52,10 @@ def compile_tweet_text(new_fire_names):
         date_started = fire_result.loc[:,CSV_COLUMN_NAMES[2]].tolist()[0]
         latitude = fire_result.loc[:,CSV_COLUMN_NAMES[3]].tolist()[0]
         longitude = fire_result.loc[:,CSV_COLUMN_NAMES[4]].tolist()[0]
-        fhsz_text = ""
-        if fhsz(latitude, longitude):
-            fhsz_text = "The fire is in an area designated as a fire hazard zone.\n"
-        tweet_text = "ALERT\n\nNew fire: " + new_fire_name + "\nCounty: " + county_name + "\nStarted on: " + date_started + "\n" + fhsz_text
+        #fhsz_text = ""
+        #if fhsz(latitude, longitude):
+        #    fhsz_text = "The fire is in an area designated as a fire hazard zone.\n"
+        tweet_text = "New wildfire in California - " + new_fire_name + "\nCounty: " + county_name + "\nStart Date: " + date_started + "\n" #+ fhsz_text
         tweet_text_list.append(tweet_text)
     return tweet_text_list
 

@@ -16,9 +16,9 @@ FIRE_NAMES_TAG = 'th'
 headers = {  'Connection': 'close', 'Accept': 'application/xml', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0'} 
 
 #other constants
-CURRENT_YEAR_URL = 'https://www.fire.ca.gov/incidents'
-PREV_YEAR_URL = 'https://www.fire.ca.gov/incidents/2022/'
-INCIDENT_URL_BASE = PREV_YEAR_URL #TODO:: change to CURRENT_YEAR_URL when done testing
+CURRENT_YEAR_URL = 'https://www.fire.ca.gov/incidents/2023/'
+TEST_YEAR_URL = 'https://www.fire.ca.gov/incidents/2022/'
+INCIDENT_URL_BASE = CURRENT_YEAR_URL
 LAT_LONG_TEXT = 'Latitude / Longitude'
 CSV_COLUMN_NAMES = ['name','county','date_started','latitude','longitude']
 
@@ -28,7 +28,7 @@ CSV_COLUMN_NAMES = ['name','county','date_started','latitude','longitude']
 def update_data_file():
     #get webpage xml from response
     with requests.Session() as s:
-        response = s.get(PREV_YEAR_URL, headers=headers)
+        response = s.get(CURRENT_YEAR_URL, headers=headers)
         response_xml = response.text
     #parse xml using lxml parser
     soup = BS(response_xml, 'lxml')
@@ -65,7 +65,7 @@ def update_data_file():
             response = s.get(incident_url, headers=headers)
             response_xml = response.text
             soup = BS(response_xml, 'lxml')
-            lat_long_title_element = soup.find(string=LAT_LONG_TEXT)
+            lat_long_title_element = soup.find(text=LAT_LONG_TEXT)
             lat_long_element = lat_long_title_element.parent.next_sibling.next_sibling
             #isolate latitude and longitude and convert from string to float
             lat_long = lat_long_element.text.replace("[", "").replace("]", "").replace(" ", "").split(",")
