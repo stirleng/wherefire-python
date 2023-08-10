@@ -68,7 +68,7 @@ def update_data_file():
             lat_long_title_element = soup.find(text=LAT_LONG_TEXT)
             lat_long_element = lat_long_title_element.parent.next_sibling.next_sibling
             #isolate latitude and longitude and convert from string to float
-            lat_long = lat_long_element.text.replace("[", "").replace("]", "").replace(" ", "").split(",")
+            lat_long = lat_long_element.replace("[", "").replace("]", "").replace(" ", "").split(",") #for some reason needed to remove '.text' bc it becomes a navigablestring in this version
             for val in lat_long:
                 float(val)
             fire_latitudes.append(lat_long[0])
@@ -76,15 +76,13 @@ def update_data_file():
 
 
     #find which fires are new
-    new_incidents_available = False
     new_incidents_fire_names = []
-    df = pd.read_csv('fire_data.csv')
+    df = pd.read_csv('/home/stirleng/Documents/wherefire-python/fire_data.csv')
     search_column_name = CSV_COLUMN_NAMES[0]
     new_fire_data = {key: [] for key in CSV_COLUMN_NAMES} #create a dict of new data to append to csv
     for fire_name, county_name, date_started,latitude,longitude in zip(fire_names, fire_counties, fire_start_dates,fire_latitudes,fire_longitudes):
         new_fire = df[df[search_column_name] == fire_name]
         if new_fire.empty:
-            new_incidents_available = True
             new_incidents_fire_names.append(fire_name)
             new_fire_data[CSV_COLUMN_NAMES[0]].append(fire_name)
             new_fire_data[CSV_COLUMN_NAMES[1]].append(county_name)
@@ -95,7 +93,7 @@ def update_data_file():
     new_fire_df.to_csv('fire_data.csv', mode='a', header=False, index=False)
 
     #note: returns a tuple of two vars
-    return new_incidents_available, new_incidents_fire_names
+    return new_incidents_fire_names
                 
 
 #TODO:: remove testing code below
